@@ -7,7 +7,7 @@ This is composed by several folders:
 * **B&B**: This contains the source, headers and binaries for my custom implementation.
 * **boost_prim**: This contains an implementation using the Prim algorithm in the [**Boost Library**](http://www.boost.org/).
 * **generated**: In this folder, there are the test cases and the python script to generate them.
-* **generic**: This contains an implementation of the Pseudo-polynomial algorithm for the Min-Max Regret by [Aissi et al.](http://www.lamsade.dauphine.fr/~bazgan/Papers/isora05.pdf).
+* **generic**: This contains an implementation of the Pseudo-polynomial algorithm for the Min-Max Regret by [Aissi et al.](http://www.lamsade.dauphine.fr/~bazgan/Papers/isora05.pdf)
 * **prim**: This contains the custom prim implementation alone.
 * **Tests**: This folder contains all the generated files for testing.
 
