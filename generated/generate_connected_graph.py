@@ -10,6 +10,7 @@ def main():
         S = 2
         range_scenario_min = 1
         range_scenario_max = 10
+        part = 1
     elif size == 3:
         try:
             N = int(sys.argv[1])
@@ -24,6 +25,7 @@ def main():
 
         range_scenario_min = 1
         range_scenario_max = 10
+        part = 1
     elif size == 5 or size == 6:
         try:
             N = int(sys.argv[1])
