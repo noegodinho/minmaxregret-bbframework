@@ -1,6 +1,6 @@
 # Branch-and-Bound Framework for the Minimum Spanning Tree Min-Max Regret problem
 
-This framework is an implementation in C++ to solve the **Min-Max Regret problem** in undirected graphs. For each scenario individually, a **Minimum Spanning Tree**, in a custom Prim implementation, is solved to obtain the best value. Then, it is applied **Branch-and-Bound** technique, with **DFS** in the **branching** and two possible **bounds**, by enumerating all possible Spanning Trees.
+This framework is an implementation in C++ to solve the **Min-Max Regret Problem** with several scenarios in undirected graphs. For each scenario individually, a **Minimum Spanning Tree**, in a custom Prim implementation, is solved to obtain the best value. Then, it is applied the **Branch-and-Bound** technique by enumerating all possible Spanning Trees, with **DFS** in the **branching** and two possible **bounds** to cut possible solutions that will not provably be better than the best found so far.
 
 This is composed by several folders:
 
