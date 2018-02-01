@@ -49,9 +49,9 @@ This contains an script in **Python3** of the test cases generator.
 
 To execute, just run:
 
-    python3 generate_connected_graph.py A B [C D E]
+    python3 generate_connected_graph.py A B [C D [E [F]]]
 
-where, **A** is the number of nodes in the graph, **B** is the number of scenarios, **C** is the minimum possible value in each edge, **D** is the maximum possible value in each edge, and **E** defines a file part.
+where, **A** is the number of nodes in the graph, **B** is the number of scenarios, **C** is the minimum possible value in each edge, **D** is the maximum possible value in each edge, **E** defines a file part, and **F** defines a uniform probability too generate an edge.
 
 This generator uses the **NumPy Library** for the random generator.
 
