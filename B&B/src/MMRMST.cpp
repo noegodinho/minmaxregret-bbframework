@@ -469,31 +469,19 @@ inline void MMRMST::MarkEdges(unsigned actual_node,
                               unsigned new_node,
                               bool value){
 
-    #ifdef SORT
-        for(std::size_t i = 0; i < this->edges[actual_node].size(); ++i){
-            if(this->edges[actual_node][i].node_connected == new_node){
-                this->edges[actual_node][i].visited = value;
-                break;
-            }
+    for(std::size_t i = 0; i < this->edges[actual_node].size(); ++i){
+        if(this->edges[actual_node][i].node_connected == new_node){
+            this->edges[actual_node][i].visited = value;
+            break;
         }
+    }
 
-        for(std::size_t i = 0; i < this->edges[new_node].size(); ++i){
-            if(this->edges[new_node][i].node_connected == actual_node){
-                this->edges[new_node][i].visited = value;
-                break;
-            }
+    for(std::size_t i = 0; i < this->edges[new_node].size(); ++i){
+        if(this->edges[new_node][i].node_connected == actual_node){
+            this->edges[new_node][i].visited = value;
+            break;
         }
-    #else
-        if(actual_node > new_node){
-            this->edges[actual_node][new_node].visited = value;
-            this->edges[new_node][actual_node - 1].visited = value;
-        }
-
-        else{
-            this->edges[actual_node][new_node - 1].visited = value;
-            this->edges[new_node][actual_node].visited = value;
-        }
-    #endif
+    }
 }
 
 /* 

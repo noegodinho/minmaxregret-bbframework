@@ -1,6 +1,6 @@
 CC = g++
 DEBUG_FLAGS = -Wall -Wextra -g
-RESULT_BB = -DRESULT_B_B
+#RESULT_BB = -DRESULT_B_B
 #SORT = -DSORT
 #THREAD = -DTHREAD
 #LTHREAD = -lpthread
