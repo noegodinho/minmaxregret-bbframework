@@ -86,6 +86,6 @@ To compile, just run:
 
 And to execute, just run:
     
-    ./generic < ../generated/generated_test_file.txt
+    ./prim < ../generated/generated_test_file.txt
 
 where **generated_test_file.txt** is the file generated.
