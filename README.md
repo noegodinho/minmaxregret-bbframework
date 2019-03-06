@@ -9,7 +9,6 @@ This is composed by several folders:
 * **generated**: In this folder, there are the test cases and the python script to generate them.
 * **generic**: This contains an implementation of the Pseudo-polynomial algorithm for the Min-Max Regret by [Aissi et al.](http://www.lamsade.dauphine.fr/~bazgan/Papers/isora05.pdf)
 * **prim**: This contains the custom prim implementation alone.
-* **Tests**: This folder contains all the generated files for testing.
 
 # B&B
 
@@ -20,7 +19,7 @@ This folder is composed by:
 * A lib folder containing the headers
 * A src folder containing the source
 
-The makefile has several debug flags (**DEBUG_FLAGS**), a result flag (**RESULT_BB**), a sort of the values flag (**SORT**), a thread flag (**THREAD**), an initial solution for the Branch-and-Bound (**INITIAL**), and a flag for the bounds implemented (**BOUNDS**).
+The makefile has several debug flags (**DEBUG_FLAGS**), a result flag (**RESULT_BB**), a sort of the values flag (**SORT**), a thread flag (**THREAD**), an initial solution for the Branch-and-Bound (**INITIAL**), several initial solutions (**INITIAL_W**), and a flag for the bounds implemented (**BOUNDS**).
 
 To compile, it is only necessary to choose the intended flags and run the following commands:
 
@@ -90,11 +89,3 @@ And to execute, just run:
     ./generic < ../generated/generated_test_file.txt
 
 where **generated_test_file.txt** is the file generated.
-
-# Tests
-
-This folder contains the **R** script to generate plots and information files of the framework runs.
-
-To execute, just run:
-    
-    Rscript plot_files.r
