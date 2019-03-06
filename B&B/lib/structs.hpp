@@ -4,7 +4,7 @@
 
 struct scenario_node{
     unsigned node;
-    long key;
+    double key;
 
     bool operator<(const scenario_node &a) const{
         return key > a.key;
@@ -24,7 +24,7 @@ struct edge{
 
 struct mst{
     int parent;
-    long weight;
+    double weight;
     unsigned weight_index;
 };
 

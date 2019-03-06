@@ -4,21 +4,12 @@
 MMRMST::MMRMST(std::vector <struct edge> *edges,
                std::vector <long> *weights,
                unsigned number_of_nodes,
-               unsigned number_of_scenarios,
-               double p){
+               unsigned number_of_scenarios){
 
     std::size_t i;
 
-    #ifdef SORT
-        std::size_t j;
-        std::size_t k;
-        long sum;
-        double q;
-    #endif
-
     this->number_of_nodes = number_of_nodes;
     this->number_of_scenarios = number_of_scenarios;
-    this->p = p;
 
     this->edges = new std::vector <struct edge> [this->number_of_nodes]();
     this->weights = new std::vector <long> [this->number_of_scenarios]();
@@ -34,22 +25,6 @@ MMRMST::MMRMST(std::vector <struct edge> *edges,
 
     for(i = 0; i < this->number_of_nodes; ++i){
         this->edges[i] = edges[i];
-
-        #ifdef SORT
-            for(j = 0; j < this->edges[i].size(); ++j){
-                sum = 0;
-                q = p;
-
-                for(k = 0; k < this->number_of_scenarios; ++k){
-                    sum += q * this->weights[k][this->edges[i][j].weight_index];
-                    q = 1.0 - q;
-                }
-
-                this->edges[i][j].sum = sum;
-            }
-
-            std::sort(this->edges[i].begin(), this->edges[i].end());
-        #endif
     }
 }
 
@@ -89,7 +64,7 @@ void MMRMST::StartBranch(unsigned node){
     std::size_t i;
     long *actual_best_scenarios;
 
-    #ifdef INITIAL
+    #if defined(INITIAL) || defined(INITIAL_W)
         for(i = 0; i < this->number_of_nodes; ++i){
             this->preorder_visited[i] = this->highest[i] = i;
         }
@@ -110,10 +85,6 @@ void MMRMST::StartBranch(unsigned node){
     #endif
 
     delete[] actual_best_scenarios;
-    
-    #ifdef THREAD
-        this->terminate = true;
-    #endif
 }
 
 /* 
@@ -264,20 +235,19 @@ inline long MMRMST::Prim2(unsigned scenario){
     return sum;
 }
 
-void MMRMST::InitialSolution(){
+void MMRMST::InitialSolution(double *w){
     std::size_t i;
     std::size_t j;
     unsigned num_nodes = 0;
     unsigned temp_node_connected;
     unsigned temp_weight;
     unsigned node_value;
-    long actual_weight;
+    double actual_weight;
     
     struct mst mst[this->number_of_nodes];
     bool visited[this->number_of_nodes];
     long best_case[this->number_of_scenarios];
     long best_weight;
-    double q;
 
     std::priority_queue <struct scenario_node> nodes;
     struct scenario_node node;
@@ -311,11 +281,9 @@ void MMRMST::InitialSolution(){
             temp_node_connected = this->edges[node_value][i].node_connected;
             temp_weight = this->edges[node_value][i].weight_index;
             actual_weight = 0;
-            q = this->p;
 
             for(j = 0; j < this->number_of_scenarios; ++j){                
-                actual_weight += q * this->weights[j][temp_weight];
-                q = 1.0 - this->p;
+                actual_weight += w[j] * this->weights[j][temp_weight];
             }
 
             if(!visited[temp_node_connected]
@@ -544,16 +512,12 @@ void MMRMST::Branch(unsigned number_of_visited,
     double time_value;
     std::size_t i;
 
-    #ifdef THREAD
-        clock_gettime(CLOCK_REALTIME, &end);
-    #else
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
-    #endif
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
 
     time_value = ((double)end.tv_sec + 1.0e-9*end.tv_nsec) - 
                  ((double)this->start.tv_sec + 1.0e-9*this->start.tv_nsec);
 
-    if(time_value >= 3600.0){
+    if(time_value >= 1800.0){
         return;
     }
 
@@ -571,12 +535,6 @@ void MMRMST::Branch(unsigned number_of_visited,
         this->CalculateWeight(actual_best_scenarios, calculated_weight);
         return;
     }
-
-    #ifdef THREAD
-        if(this->terminate){
-            return;
-        }
-    #endif    
 
     #ifdef BOUND1
         if(calculated_weight >= this->best_weight){
@@ -710,4 +668,19 @@ void MMRMST::ShowResultBranch(){
     }
 
     printf("\nBest weight: %ld\n\n", this->best_weight);
+}
+
+void MMRMST::WriteSolToFile(char *file){
+    std::ofstream myfile;
+    myfile.open(file);
+
+    myfile << this->number_of_scenarios << "\n";
+
+    for(std::size_t i = 0; i < this->number_of_scenarios; ++i){
+        myfile << this->best_case[i] << "\n";
+    }
+
+    myfile << this->best_weight << "\n";
+    
+    myfile.close();
 }

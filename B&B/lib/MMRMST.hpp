@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <fstream>
 #include <queue>
 #include <stack>
 #include <thread>
@@ -32,13 +34,8 @@ private:
     unsigned number_of_nodes;
     unsigned number_of_scenarios;
     unsigned count;
-    double p;
 
     static struct timespec start;
-
-    #ifdef THREAD
-        static bool terminate;
-    #endif
 
     /* methods */
     long Prim(unsigned scenario);
@@ -65,8 +62,7 @@ public:
     MMRMST(std::vector <struct edge> *edges,
            std::vector <long> *weights,
            unsigned number_of_nodes,
-           unsigned number_of_scenarios,
-           double p);
+           unsigned number_of_scenarios);
     ~MMRMST();
 
     void Allocate();
@@ -74,9 +70,10 @@ public:
     void InitializeSum(double p);
     void setTime(struct timespec start);
     void Optimal();
-    void InitialSolution();
+    void InitialSolution(double *w);
     void StartBranch(unsigned node);
     void Delete();
+    void WriteSolToFile(char *file);
 };
 
 

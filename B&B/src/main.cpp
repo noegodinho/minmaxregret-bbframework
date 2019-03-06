@@ -6,12 +6,8 @@ long *MMRMST::optimal_scenarios;
 long *MMRMST::best_case;
 struct timespec MMRMST::start;
 
-#ifdef THREAD
-    bool MMRMST::terminate = false;
-#endif
 
-
-int main(){
+int main(int argc, char **argv){
     struct timespec start, end;
     unsigned number_of_nodes;
     unsigned number_of_scenarios;
@@ -23,6 +19,14 @@ int main(){
     unsigned node1;
     unsigned node2;
     double time_value;
+
+    #ifdef INITIAL// || defined(INITIAL_W)
+        double *w;
+    #endif
+
+    #ifdef INITIAL_W
+        double **w;
+    #endif
 
     struct edge temp_edge;
 
@@ -61,59 +65,65 @@ int main(){
         ++it;
     }
 
-    #ifdef THREAD
-        const static unsigned num_threads = 4;
-        unsigned i;
-        std::thread t[num_threads];
-        MMRMST MMRMST_instance[num_threads]{{edges, weights, number_of_nodes, number_of_scenarios, 0.8},
-                                            {edges, weights, number_of_nodes, number_of_scenarios, 0.6},
-                                            {edges, weights, number_of_nodes, number_of_scenarios, 0.4},
-                                            {edges, weights, number_of_nodes, number_of_scenarios, 0.2}};
+    #ifdef INITIAL
+        w = new double[number_of_scenarios];
 
-        MMRMST_instance[0].Allocate();
-        clock_gettime(CLOCK_REALTIME, &start);
+        for(it = 0; it < number_of_scenarios; ++it){
+            w[it] = 1.0 / number_of_scenarios;
+        }
+    #endif
 
-        MMRMST_instance[0].setTime(start);
-        MMRMST_instance[0].Optimal();
+    #ifdef INITIAL_W
+        w = new double *[number_of_scenarios + 1];
 
-        #ifdef INITIAL
-            for(i = 0; i < num_threads; ++i){
-                MMRMST_instance[i].InitialSolution();
+        for(it = 0; it < number_of_scenarios + 1; ++it){
+            w[it] = new double[number_of_scenarios];
+        }
+
+        for(it = 0; it < number_of_scenarios; ++it){
+            for(k = 0; k < number_of_scenarios; ++k){
+                if(it == k){
+                    w[it][k] = (2.0*number_of_scenarios - number_of_scenarios + 1.0) / (2.0*number_of_scenarios);
+                }
+
+                else{
+                    w[it][k] = 1.0 / (2.0*number_of_scenarios);
+                }
             }
-        #endif
-
-        for(i = 0; i < num_threads; ++i){
-            t[i] = std::thread(&MMRMST::StartBranch, &MMRMST_instance[i], i);
         }
 
-        for(i = 0; i < num_threads; ++i){
-            t[i].join();
+        for(it = 0; it < number_of_scenarios; ++it){
+            w[number_of_scenarios][it] = 1.0 / number_of_scenarios;
         }
+    #endif
 
-        MMRMST_instance[0].Delete();
-        clock_gettime(CLOCK_REALTIME, &end);
-    #else
-        MMRMST MMRMST_instance(edges, weights, number_of_nodes, number_of_scenarios, 0.5);
+    MMRMST MMRMST_instance(edges, weights, number_of_nodes, number_of_scenarios);
 
-        MMRMST_instance.Allocate();
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+    MMRMST_instance.Allocate();
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
 
-        MMRMST_instance.setTime(start);
-        MMRMST_instance.Optimal();
+    MMRMST_instance.setTime(start);
+    MMRMST_instance.Optimal();
 
-        #ifdef INITIAL
-            MMRMST_instance.InitialSolution();
-        #endif
+    #ifdef INITIAL
+        MMRMST_instance.InitialSolution(w);
+    #endif
 
-        MMRMST_instance.StartBranch(0);
-        MMRMST_instance.Delete();
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
-    #endif    
+    #ifdef INITIAL_W
+        for(it = 0; it < number_of_scenarios + 1; ++it){
+            MMRMST_instance.InitialSolution(w[it]);
+        }
+    #endif
+
+    MMRMST_instance.StartBranch(0);
+    MMRMST_instance.WriteSolToFile(argv[1]);
+    MMRMST_instance.Delete();
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
 
     time_value = ((double)end.tv_sec + 1.0e-9*end.tv_nsec) - ((double)start.tv_sec + 1.0e-9*start.tv_nsec);
 
-    if(time_value >= 3600.0){
-        printf("3600.000000\n");
+    if(time_value >= 1800.0){
+        printf("1800.000000\n");
     }
 
     else{
@@ -122,6 +132,16 @@ int main(){
 
     delete[] edges;
     delete[] weights;
+
+    #ifdef INITIAL
+        delete[] w;
+    #endif
+
+    #ifdef INITIAL_W
+        for(it = 0; it < number_of_scenarios + 1; ++it){
+            delete[] w[it];
+        }
+    #endif
 
     return 0;
 }
